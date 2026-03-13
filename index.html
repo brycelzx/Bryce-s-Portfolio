@@ -1,647 +1,1366 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bryce — Video Editor Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0a0a0a;
-      --bg2: #111111;
-      --gold: #c8a96e;
-      --gold-light: #e8cfa0;
-      --white: #f0ece4;
-      --muted: #5a5550;
-      --border: #1e1c19;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bryce — Video Editor & Media Creator</title>
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<!--
+  字體系統 v4（Editorial Magazine）
+  Syne ExtraBold  → Hero name、Section title（獨特幾何感，非主流）
+  Noto Sans TC    → 中文UI、內文（清晰可讀）
+  DM Mono         → 數字、tag、metadata
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+TC:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
 
-    html { scroll-behavior: smooth; }
+<style>
+/* ══════════════════════════════════════
+   TOKENS — Light Editorial Theme
+   之前版本都係 dark，今次大反差做淺色，
+   令人一眼記住
+══════════════════════════════════════ */
+:root {
+  /* Background */
+  --bg:         #F5F2EC;   /* 暖米白，唔係純白，有質感 */
+  --bg-card:    #FFFFFF;
+  --bg-card-h:  #FDFCFA;
+  --bg-dark:    #18160F;   /* 反色 hero 用 */
 
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      line-height: 1.6;
-      cursor: default;
-    }
+  /* Text */
+  --ink-1:      #1C1A13;   /* 主文字，唔係純黑 */
+  --ink-2:      #6B6459;   /* 次要文字 */
+  --ink-3:      #A89E92;   /* 最弱 */
+  --ink-inv:    #F5F2EC;   /* 深色背景上用 */
 
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(10,10,10,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 3rem;
-      height: 60px;
-    }
+  /* Accent — 暖橘棕，有創作感，唔老土 */
+  --accent:     #C95C1E;
+  --accent-soft:rgba(201,92,30,0.10);
+  --accent-line:rgba(201,92,30,0.25);
 
-    .nav-logo {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      color: var(--gold);
-      text-transform: uppercase;
-    }
+  /* Platform */
+  --ig-bg:      rgba(225,48,108,0.08);
+  --ig-text:    #C23066;
+  --ig-border:  rgba(225,48,108,0.18);
+  --yt-bg:      rgba(192,57,43,0.08);
+  --yt-text:    #B34035;
+  --yt-border:  rgba(192,57,43,0.18);
+  --gd-bg:      rgba(66,133,244,0.08);
+  --gd-text:    #3B72C4;
+  --gd-border:  rgba(66,133,244,0.18);
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
+  /* Border & Divider */
+  --line:       rgba(28,26,19,0.09);
+  --line-med:   rgba(28,26,19,0.14);
 
-    .nav-links a {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.3s;
-    }
+  /* Shadow — 三層光源模型
+     inset top highlight = 模擬上方光源打落頂部亮邊
+     三層 box-shadow = ambient + key + contact   */
+  --shadow-sm:
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    0 1px 2px rgba(28,26,19,0.04),
+    0 2px 6px rgba(28,26,19,0.05),
+    0 4px 10px rgba(28,26,19,0.04);
+  --shadow-md:
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    0 2px 4px rgba(28,26,19,0.05),
+    0 6px 16px rgba(28,26,19,0.07),
+    0 14px 30px rgba(28,26,19,0.06);
+  --shadow-lg:
+    inset 0 1px 0 rgba(255,255,255,0.80),
+    0 4px 6px rgba(28,26,19,0.04),
+    0 10px 24px rgba(28,26,19,0.10),
+    0 28px 52px rgba(28,26,19,0.11);
 
-    .nav-links a:hover { color: var(--gold); }
+  /* Spacing */
+  --nav-h: 58px;
+}
 
-    /* ── HERO ── */
-    #home {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 0 4rem 6rem;
-      position: relative;
-      overflow: hidden;
-    }
+/* ══════════════════════════════════════
+   RESET
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  /* 非常微妙的徑向漸層，令頁面中央稍微亮一點，像光打落來 */
+  background-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.35) 0%, transparent 70%);
+  color: var(--ink-1);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
 
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 50% at 80% 30%, rgba(200,169,110,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 20% 70%, rgba(200,169,110,0.04) 0%, transparent 50%);
-    }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 2px; }
 
-    .hero-line {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 50%;
-      width: 1px;
-      background: linear-gradient(to bottom, transparent, var(--border), transparent);
-    }
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 900;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 3rem;
+  background: rgba(245,242,236,0.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  /* Nav 既有 border-bottom，又有 drop shadow，令它明顯「浮」在頁面上方 */
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  box-shadow:
+    0 1px 0 var(--line),
+    0 2px 8px rgba(28,26,19,0.05),
+    0 6px 20px rgba(28,26,19,0.04);
+}
 
-    .hero-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 1s 0.3s forwards;
-    }
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  color: var(--ink-1);
+}
+.nav-logo span { color: var(--accent); }
 
-    h1 {
-      font-size: clamp(4rem, 10vw, 9rem);
-      font-weight: 300;
-      line-height: 0.9;
-      letter-spacing: -0.02em;
-      opacity: 0;
-      animation: fadeUp 1s 0.5s forwards;
-    }
+.nav-links {
+  display: flex; list-style: none; gap: 0;
+}
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  padding: 0.45rem 1rem;
+  border-left: 1px solid var(--line);
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 1rem; right: 1rem;
+  height: 1.5px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-links a:hover { color: var(--ink-1); }
+.nav-links a:hover::after { transform: scaleX(1); }
 
-    h1 em {
-      font-style: italic;
-      color: var(--gold);
-    }
+/* ══════════════════════════════════════
+   HERO
+   大反差：深色背景 + 淺米白主體，
+   製造戲劇性翻轉感
+══════════════════════════════════════ */
+#home {
+  min-height: 100svh;
+  background: var(--bg-dark);
+  padding: var(--nav-h) 3rem 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  position: relative;
+  overflow: hidden;
+}
 
-    .hero-sub {
-      margin-top: 2rem;
-      max-width: 500px;
-      font-size: 1rem;
-      color: var(--muted);
-      font-style: italic;
-      opacity: 0;
-      animation: fadeUp 1s 0.8s forwards;
-    }
+/* 右側大字裝飾（背景水印） */
+#home::before {
+  content: 'B';
+  position: absolute;
+  right: -0.1em; top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: min(55vw, 55vh);
+  line-height: 1;
+  color: rgba(255,255,255,0.02);
+  pointer-events: none;
+  user-select: none;
+}
 
-    .hero-gear {
-      margin-top: 3rem;
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 1s 1s forwards;
-    }
+/* Accent 橫線裝飾 */
+#home::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 3rem;
+  width: 2px; height: 100%;
+  background: linear-gradient(to bottom, var(--accent), transparent 60%);
+  opacity: 0.4;
+}
 
-    .gear-item {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      text-transform: uppercase;
-      border: 1px solid var(--border);
-      padding: 0.4rem 0.8rem;
-    }
+.hero-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 5rem;
+  position: relative;
+  z-index: 1;
+}
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: heroIn 0.8s 0.1s cubic-bezier(0.16,1,0.3,1) forwards;
+}
 
-    /* ── SECTIONS ── */
-    section {
-      padding: 6rem 4rem;
-      border-top: 1px solid var(--border);
-    }
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(4rem, 11vw, 10.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  color: var(--ink-inv);
+  opacity: 0;
+  animation: heroIn 0.9s 0.25s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+/* Portfolio 換行並縮小 */
+.hero-name .sub {
+  display: block;
+  font-size: 0.48em;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: rgba(245,242,236,0.3);
+  margin-top: 0.15em;
+}
 
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-    }
+.hero-desc {
+  margin-top: 2.5rem;
+  max-width: 36ch;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 2;
+  color: rgba(245,242,236,0.5);
+  opacity: 0;
+  animation: heroIn 0.9s 0.45s cubic-bezier(0.16,1,0.3,1) forwards;
+}
 
-    .section-num {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-    }
+/* Stats row — 每個 stat 做成獨立浮起面板 */
+.hero-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 4rem;
+  opacity: 0;
+  animation: heroIn 0.9s 0.65s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.stat {
+  flex: 1;
+  padding: 1.2rem 1.4rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-top-color: rgba(255,255,255,0.14);  /* 頂部亮邊 */
+  border-radius: 6px;
+  /* 像一塊半透明玻璃片浮在深色背景上 */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 2px 8px rgba(0,0,0,0.2),
+    0 8px 20px rgba(0,0,0,0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--ink-inv);
+  line-height: 1;
+}
+.stat-num span { color: var(--accent); font-size: 0.6em; vertical-align: super; }
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245,242,236,0.35);
+  margin-top: 0.4rem;
+}
 
-    h2 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 300;
-      letter-spacing: -0.01em;
-    }
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-    h2 span { font-style: italic; color: var(--gold); }
+/* ══════════════════════════════════════
+   GEAR STRIP（Hero 下方快速資訊帶）
+══════════════════════════════════════ */
+.gear-strip {
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  height: 40px;
+  /* 上下內陰影令它像一條嵌入頁面的凹槽 */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.20),
+    inset 0 -2px 4px rgba(0,0,0,0.20),
+    0 4px 12px rgba(201,92,30,0.25);
+}
+.gear-strip-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  padding: 0 1.5rem;
+  border-right: 1px solid rgba(255,255,255,0.2);
+  white-space: nowrap;
+  line-height: 40px;
+  height: 40px;
+}
+.gear-strip-item:last-child { border-right: none; }
 
-    .client-block {
-      margin-bottom: 4rem;
-    }
+/* ══════════════════════════════════════
+   SECTION BASE
+══════════════════════════════════════ */
+.section {
+  padding: 6rem 3rem;
+  /* 每個 section 有自己嘅輕微背景，製造「頁面層次」感 */
+  background: linear-gradient(180deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.4) 40%, rgba(255,255,255,0.0) 100%);
+}
+.section + .section {
+  border-top: 1px solid var(--line);
+  /* 上方 section 投落嘅陰影，令層次感更明顯 */
+  box-shadow: inset 0 4px 12px rgba(28,26,19,0.025);
+}
 
-    .client-name {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.2rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 1px solid var(--border);
-    }
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 3.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line-med);
+}
+.section-title-group {}
+.section-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ink-1);
+}
+.section-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
 
-    .platform-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 1.2rem 0 0.8rem;
-    }
+/* ══════════════════════════════════════
+   CLIENT TABS
+══════════════════════════════════════ */
+.client-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid var(--line);
+}
+.tab-btn {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--ink-3);
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  position: relative;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.tab-btn:hover { color: var(--ink-1); }
+.tab-btn.active {
+  color: var(--ink-1);
+  font-weight: 500;
+}
+.tab-btn.active::after { transform: scaleX(1); }
 
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
+/* ══════════════════════════════════════
+   CLIENT PANEL
+══════════════════════════════════════ */
+.client-panel { display: none; }
+.client-panel.active { display: block; }
 
-    .video-card {
-      background: var(--bg2);
-      padding: 1.2rem 1.4rem;
-      transition: background 0.25s;
-      position: relative;
-    }
+/* ══════════════════════════════════════
+   PLATFORM GROUP
+══════════════════════════════════════ */
+.platform-group {
+  margin-bottom: 3rem;
+}
+.platform-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.2rem;
+}
+.platform-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+  /* Badge 也有頂部高光，保持光源一致性 */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.50), 0 1px 3px rgba(28,26,19,0.08);
+}
+.badge-ig   { background: var(--ig-bg);  color: var(--ig-text);  border: 1px solid var(--ig-border); }
+.badge-yt   { background: var(--yt-bg);  color: var(--yt-text);  border: 1px solid var(--yt-border); }
+.badge-drive{ background: var(--gd-bg);  color: var(--gd-text);  border: 1px solid var(--gd-border); }
 
-    .video-card:hover { background: #161410; }
+.platform-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 300;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
 
-    .video-card a {
-      display: block;
-      color: var(--white);
-      text-decoration: none;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      padding-right: 1.5rem;
-    }
+/* ══════════════════════════════════════
+   VIDEO CARD GRID
+   12-column grid concept:
+   Featured card (first) = 2 cols
+   Regular = 1 col
+   minmax(220px, 1fr) with auto-fill
+══════════════════════════════════════ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
 
-    .video-card a::after {
-      content: '↗';
-      position: absolute;
-      top: 1.2rem;
-      right: 1.2rem;
-      color: var(--muted);
-      font-size: 0.75rem;
-      transition: color 0.2s, transform 0.2s;
-    }
+/* Featured = first card is double-width */
+.card-grid .video-card:first-child {
+  grid-column: span 2;
+}
 
-    .video-card:hover a::after {
-      color: var(--gold);
-      transform: translate(2px, -2px);
-    }
+/* Base card */
+.video-card {
+  background: var(--bg-card);
+  /* 卡片邊框：頂部用白色高光，底部用稍深嘅線 */
+  border: 1px solid rgba(28,26,19,0.08);
+  border-top-color: rgba(255,255,255,0.9);   /* 頂部受光亮邊 */
+  border-bottom-color: rgba(28,26,19,0.12);  /* 底部重邊 */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  /* will-change 令瀏覽器預先準備 GPU layer，hover 更流暢 */
+  will-change: transform, box-shadow;
+  transition:
+    transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+    box-shadow 0.28s ease;
+  cursor: pointer;
+}
+.video-card:hover {
+  /* 向上浮起 5px，比 v4 的 3px 更明顯 */
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+/* 按下時輕微下沉 */
+.video-card:active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  transition-duration: 0.1s;
+}
 
-    /* ── SCRIPTS ── */
-    #scripts .script-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
+/* Thumbnail — base rule, details below in thumb-ig block */
 
-    .script-card {
-      border: 1px solid var(--border);
-      padding: 2rem;
-      position: relative;
-      transition: border-color 0.3s;
-    }
+/* Platform icon overlay */
+.thumb-platform {
+  position: absolute;
+  bottom: 0.6rem; right: 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.55rem;
+  border-radius: 3px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+  z-index: 2;
+}
+.tp-yt  { background: rgba(192,57,43,0.90); color: #fff; }
+.tp-ig  { background: rgba(180,40,100,0.85); color: #fff; }
 
-    .script-card:hover { border-color: var(--gold); }
+/* IG 無縮圖 → 用漸層色代替 */
+.thumb-ig {
+  background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #F77737 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.thumb-ig .ig-icon {
+  width: 36px; height: 36px;
+  opacity: 0.4;
+}
 
-    .script-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px;
-      height: 100%;
-      background: var(--gold);
-      transform: scaleY(0);
-      transition: transform 0.3s;
-      transform-origin: bottom;
-    }
+/* YouTube thumbnail fallback — shown when img fails/blocks */
+.card-thumb {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #1a1410 0%, #2d2318 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Play icon shown as fallback */
+.card-thumb::after {
+  content: '▶';
+  position: absolute;
+  font-size: 1.4rem;
+  color: rgba(255,255,255,0.15);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.video-card:hover .card-thumb::after {
+  color: rgba(201,92,30,0.5);
+}
+/* When img loads successfully, it covers the fallback */
+.card-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  z-index: 1;
+}
+.video-card:hover .card-thumb img { transform: scale(1.04); }
+/* Platform badge sits on top */
+.thumb-platform {
+  z-index: 2;
+}
 
-    .script-card:hover::before { transform: scaleY(1); }
+/* Card body */
+.card-body {
+  padding: 0.9rem 1rem 1rem;
+}
+.card-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink-1);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s;
+}
+.video-card:hover .card-title { color: var(--accent); }
 
-    .script-title {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
+.card-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.2s;
+}
+.video-card:hover .card-link-btn { color: var(--accent); }
+.card-link-btn::after { content: '↗'; }
 
-    .script-meta {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.8rem;
-    }
+/* ══════════════════════════════════════
+   SCRIPTS SECTION
+   骨架屏 + 「整理中」佔位設計
+══════════════════════════════════════ */
+.script-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
 
-    .script-excerpt {
-      font-size: 0.9rem;
-      color: var(--muted);
-      font-style: italic;
-      line-height: 1.7;
-    }
+/* 骨架屏卡片 */
+.skeleton-card {
+  background: var(--bg-card);
+  border: 1px dashed rgba(28,26,19,0.12);
+  border-top: 1px solid rgba(255,255,255,0.9);
+  border-radius: 10px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    0 1px 3px rgba(28,26,19,0.03),
+    0 3px 8px rgba(28,26,19,0.04);
+}
+.skeleton-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.6) 50%,
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
 
-    .script-placeholder {
-      color: var(--muted);
-      font-style: italic;
-      font-size: 0.85rem;
-      padding: 3rem;
-      border: 1px dashed var(--border);
-      text-align: center;
-    }
+.skel-line {
+  height: 10px;
+  border-radius: 4px;
+  background: var(--line-med);
+  margin-bottom: 0.65rem;
+}
+.skel-line.w-60 { width: 60%; }
+.skel-line.w-80 { width: 80%; }
+.skel-line.w-40 { width: 40%; }
+.skel-line.h-14 { height: 14px; }
 
-    /* ── ABOUT / GEAR ── */
-    #about .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-    }
+/* 「整理中」標籤 */
+.skel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+}
+.skel-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
 
-    .about-text {
-      font-size: 1.05rem;
-      color: rgba(240,236,228,0.8);
-      line-height: 1.9;
-    }
+/* 有內容的劇本卡 */
+.script-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(28,26,19,0.08);
+  border-top-color: rgba(255,255,255,0.9);
+  border-bottom-color: rgba(28,26,19,0.12);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s ease;
+  position: relative;
+  overflow: hidden;
+}
+.script-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--accent), rgba(201,92,30,0.4));
+}
+.script-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.script-card:active {
+  transform: translateY(-1px);
+  transition-duration: 0.1s;
+}
+.script-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+.script-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  color: var(--ink-1);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+.script-desc {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
 
-    .gear-list { list-style: none; }
+/* ══════════════════════════════════════
+   ABOUT
+══════════════════════════════════════ */
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+}
 
-    .gear-category {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin: 1.5rem 0 0.6rem;
-    }
+.about-text {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 2.1;
+  color: var(--ink-2);
+}
+.about-text p + p { margin-top: 1.4rem; }
 
-    .gear-list li {
-      font-size: 0.95rem;
-      color: rgba(240,236,228,0.7);
-      padding: 0.35rem 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
+/* Gear table */
+.gear-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.gear-category {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 1.2rem 0 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+.gear-category:first-child { padding-top: 0; }
+.gear-row {
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.gear-row:last-child { border-bottom: none; }
+.gear-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+.gear-name {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--ink-1);
+}
 
-    .gear-list li::before {
-      content: '—';
-      color: var(--muted);
-      font-size: 0.7rem;
-    }
+/* ══════════════════════════════════════
+   CONTACT
+══════════════════════════════════════ */
+#contact {
+  background: var(--bg-dark);
+  text-align: center;
+}
+.contact-inner { max-width: 500px; margin: 0 auto; }
+.contact-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  letter-spacing: -0.025em;
+  color: var(--ink-inv);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+.contact-title span { color: var(--accent); }
+.contact-sub {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 2;
+  color: rgba(245,242,236,0.45);
+  margin-bottom: 2.5rem;
+}
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: 4px;
+  /* 立體按鈕：底部深色邊 + 頂部亮邊 + 陰影 */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    0 1px 0 rgba(0,0,0,0.25),
+    0 3px 8px rgba(201,92,30,0.35),
+    0 8px 20px rgba(201,92,30,0.20);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
+  cursor: pointer;
+}
+.contact-btn:hover {
+  background: #d96520;
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    0 1px 0 rgba(0,0,0,0.25),
+    0 5px 14px rgba(201,92,30,0.40),
+    0 14px 32px rgba(201,92,30,0.22);
+}
+/* 按下時下沉 */
+.contact-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.20),
+    0 1px 0 rgba(0,0,0,0.25);
+  transition-duration: 0.06s;
+}
+.contact-btn::after { content: '↗'; font-size: 0.9em; }
 
-    /* ── CONTACT ── */
-    #contact {
-      text-align: center;
-      padding-bottom: 8rem;
-    }
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: var(--bg-dark);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+footer span {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,242,236,0.25);
+}
 
-    #contact h2 { margin-bottom: 1rem; }
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .about-layout { grid-template-columns: 1fr; gap: 3.5rem; }
+}
 
-    .contact-email {
-      display: inline-block;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      color: var(--gold);
-      text-decoration: none;
-      border: 1px solid var(--gold);
-      padding: 0.8rem 2rem;
-      margin-top: 2rem;
-      transition: background 0.3s, color 0.3s;
-    }
+@media (max-width: 680px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links a { padding: 0.4rem 0.6rem; font-size: 0.55rem; }
 
-    .contact-email:hover {
-      background: var(--gold);
-      color: var(--bg);
-    }
+  .section { padding: 4rem 1.25rem; }
+  #home { padding-left: 1.25rem; padding-right: 1.25rem; }
+  #contact { padding-left: 1.25rem; padding-right: 1.25rem; }
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 4rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  .hero-name { font-size: clamp(3rem, 14vw, 6rem); }
+  .hero-stats { flex-wrap: wrap; }
+  .stat { flex: 1 1 40%; }
 
-    footer span {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
+  .gear-strip { overflow-x: auto; }
 
-    /* ── SCROLLBAR ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--muted); }
+  /* Featured card doesn't span 2 on small screens */
+  .card-grid .video-card:first-child { grid-column: span 1; }
+  .card-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
-    @media (max-width: 768px) {
-      nav { padding: 0 1.5rem; }
-      .nav-links { gap: 1rem; }
-      #home { padding: 0 1.5rem 4rem; }
-      section { padding: 4rem 1.5rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-      footer { flex-direction: column; gap: 1rem; text-align: center; }
-    }
-  </style>
+  .client-tabs { overflow-x: auto; }
+  .tab-btn { white-space: nowrap; }
+
+  footer { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 400px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+</style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
+<!-- ══ NAV ══ -->
 <nav>
-  <div class="nav-logo">Bryce · Editor</div>
+  <div class="nav-logo">Bryce<span>.</span></div>
   <ul class="nav-links">
     <li><a href="#home">Home</a></li>
     <li><a href="#works">作品集</a></li>
     <li><a href="#scripts">劇本</a></li>
-    <li><a href="#about">關於 / 器材</a></li>
+    <li><a href="#about">關於</a></li>
     <li><a href="#contact">聯絡</a></li>
   </ul>
 </nav>
 
-<!-- ── HERO ── -->
+<!-- ══ HERO ══ -->
 <section id="home">
-  <div class="hero-bg"></div>
-  <div class="hero-line"></div>
-  <div class="hero-tag">Video Editor · Media Creator · Hong Kong</div>
-  <h1>Bryce<br/><em>Portfolio</em></h1>
-  <p class="hero-sub">剪接不只是技術，是敘事的藝術。每一個剪點，都是情感的呼吸。</p>
-  <div class="hero-gear">
-    <div class="gear-item">Sony FX3</div>
-    <div class="gear-item">Sony A7 IV</div>
-    <div class="gear-item">Adobe Premiere Pro</div>
-    <div class="gear-item">Rode Wireless GO ii</div>
-  </div>
-</section>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Video Editor &nbsp;·&nbsp; Media Creator &nbsp;·&nbsp; Hong Kong</p>
+    <h1 class="hero-name">
+      Bryce
+      <span class="sub">Portfolio / 作品集</span>
+    </h1>
+    <p class="hero-desc">剪接不只是技術，是敘事的藝術。每一個剪點，都是情感的呼吸。從企劃到後期，全程參與每個故事。</p>
 
-<!-- ── WORKS ── -->
-<section id="works">
-  <div class="section-header">
-    <span class="section-num">01 —</span>
-    <h2>精選<span>作品</span></h2>
-  </div>
-
-  <!-- Channel 1 HK -->
-  <div class="client-block">
-    <div class="client-name">Channel 1 HK</div>
-
-    <div class="platform-label">▸ Instagram Reels</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.instagram.com/reel/DRb28GVCS53/?igsh=Nmw2OWp4dm1yb3lz" target="_blank">婷一婷，諗一諗（feat. Yanny Lau）</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DH3GOh0yoGM/" target="_blank">小學生的愛情觀 你接受到幾多歲拍拖？</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DJjX-ilyJGY/" target="_blank">18歲的愛（feat.張錦霞） 第一集</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DJq_jIryP5E/" target="_blank">18歲的愛（feat.張錦霞） 第二集</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DJ1SxI4yyBb/" target="_blank">18歲的愛（feat.張錦霞） 第三集</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DQtfnjYCS9j/" target="_blank">18區的愛 深水埗篇</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DOnrDsXCagl/" target="_blank">觸電感覺 （feat.林敏聰、Yanny Chan）</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DQ6YYGHCfpt/" target="_blank">00後的愛情（feat.黎紜蔚）</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DRMYzPCCZBR/" target="_blank">00後整頓職場大結局</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DQBuGkMCSdu/" target="_blank">POV：如何食住你男友</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DQLX4ZlCbr8/" target="_blank">動漫殘酷二選一</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DPyRxt-CeSe/" target="_blank">2025廣東歌接龍 challenge</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DIgNYrQSZyM/" target="_blank">YOUNG AND CHIKAWA 古惑的愛</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DI0sGMHySk6/" target="_blank">最Kam的穿搭是什麼？</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DD6xwbSS8X-/" target="_blank">改編聖誕版 Dear Jane《到底發生過什麼事》</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DD_KvDnysvP/" target="_blank">FREE CHRISTMAS SONG</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DFC50AcSqi2/" target="_blank">觀濱愛情故事 見到free kiss就直接Kiss</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DFpZyDGSdRE/" target="_blank">中學生的愛情觀 你們覺得拍拖是為了什麼？</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DPWCrcjiQEr/" target="_blank">05後的愛情故事</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DGAkUVqyIdV/" target="_blank">LOVE IN 18 DISTRICT 18區的愛 觀塘海濱篇</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DHdXuipyZZF/" target="_blank">情感出軌 VS 肉體出軌 十個男人九個滾</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DG5ETSzydi0/" target="_blank">男女曖昧的信號？ 對方不抗拒和你有身體接觸</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DGu7jdJz4a-/" target="_blank">男女之間愛的暗示？男女之間有純友誼</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DITWMm3yZcF/" target="_blank">行行出愛人 網紅篇</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DK9Wyp_Ss3X/" target="_blank">表白被拒怎麽辦？ 如果你沒有女朋友</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DKMYSNqSA70/" target="_blank">POV: 我與異性老 Best的一天 A Day with my Boy BFF</a></div>
-    </div>
-
-    <div class="platform-label">▸ YouTube 短劇</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=H6BYhrOZNuo" target="_blank">#短劇場 《古惑的愛》 Young and Chiikawa</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=hINKhP05JLM" target="_blank">《18歲的愛》 EP1-3 #短劇場</a></div>
-    </div>
-
-    <div class="platform-label">▸ YouTube 情感百科</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=5eAuWnT0Lao" target="_blank">新春過年親戚拷問大作戰！如何應對「幾錢人工？幾時拍拖？幾時結婚？」三大難題？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=bCoHiarSVcs" target="_blank">盤點：十大戀愛中的Red flag行為！feat. Coco</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=0Yna-TlUprQ" target="_blank">愈多Like就代表愈快樂愈幸福？新世代的親密關係 feat. EG大個仔</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=-CBMFZq_1Oo" target="_blank">同居生活快樂不快樂？分手難度大增？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=dEBGXiGiQ_A" target="_blank">為何總是沒有安全感？女生寧願男生肉體出軌？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=zaLHMDlW2Uk" target="_blank">結婚的意義是什麼？ GenZ 95後都拒絕結婚？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=zy6hKFOzpms" target="_blank">新戀愛模式 Situationship？ 無需負責又有性有愛</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=ZFbMyFsUASU" target="_blank">姊弟戀究竟有多好？愛上弟弟有一個好大的優勢？ feat. Killer</a></div>
-    </div>
-
-    <div class="platform-label">▸ YouTube 街訪</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=xalCFSZqbnE" target="_blank">#街訪 你知唔知有人Stalk你？收過最恐怖DM是什麼？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=IliDCWfnuAM" target="_blank">#街訪 2025年潮什麼？最流行items 係XXX？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=3sa47E_2VvQ" target="_blank">#街訪 揭秘GenZ 觀濱愛情觀！ 中學生蘭桂坊？</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=GCFDSjIdV6Q" target="_blank">#街訪 00後愛情觀！拖手都唔代表有意思</a></div>
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=FNIiGiRfnEE" target="_blank">#街訪 香港原來好容易就拍拖？追女仔原來只靠兩個字</a></div>
-    </div>
-
-    <div class="platform-label">▸ YouTube 業配</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=4ZXCd7I28_I" target="_blank">【東Try】盲測整牙系列！北上返深圳做全瓷牙貼可靠嗎？</a></div>
-    </div>
-  </div>
-
-  <!-- The One Percent Studio -->
-  <div class="client-block">
-    <div class="client-name">The One Percent Studio</div>
-    <div class="platform-label">▸ Instagram Reels</div>
-    <p class="about-text" style="font-style:italic; color:var(--muted); font-size:0.9rem;">（連結即將加入）</p>
-    <div class="platform-label">▸ YouTube</div>
-    <p class="about-text" style="font-style:italic; color:var(--muted); font-size:0.9rem;">（連結即將加入）</p>
-  </div>
-
-  <!-- Topaau 土炮 -->
-  <div class="client-block">
-    <div class="client-name">Topaau 土炮</div>
-    <div class="platform-label">▸ Instagram Reels</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.instagram.com/reel/DNVNALPT8H8/?igsh=MTIzYTJ5YXcxaG03" target="_blank">香港美食 生炸雞髀</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DLFAjZbBZDE/" target="_blank">香港美食 乾炒牛河</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DGknfOypx7O/" target="_blank">香港美食 紅燒乳鴿</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DKg9aHWhLy9/" target="_blank">全城最正 白灼牛肉</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DEUa8MEN_4h/" target="_blank">香港美食 芒果白汁冰</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DDeWTRYqWMD/" target="_blank">全城最正 大蝦煎米粉</a></div>
-      <div class="video-card"><a href="https://www.instagram.com/p/DCWQEEDILDZ/" target="_blank">懷舊牛雜麵</a></div>
-    </div>
-  </div>
-
-  <!-- Event -->
-  <div class="client-block">
-    <div class="client-name">活動紀錄</div>
-    <div class="platform-label">▸ YouTube</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://www.youtube.com/watch?v=yaUNM4p-GZo&list=PL_lQztepaKDCxWHy_hgMdgsZHGnUs7Ct7" target="_blank">老玩童游法國《情迷巴黎》新書分享會 — 足本重溫</a></div>
-    </div>
-  </div>
-
-  <!-- Freelance -->
-  <div class="client-block">
-    <div class="client-name">Freelance 自由接案</div>
-    <div class="platform-label">▸ 精選作品</div>
-    <div class="video-grid">
-      <div class="video-card"><a href="https://drive.google.com/file/d/1E8-agOU5EbWOTmks7_dzF-W2iApVRg50/view?usp=drive_link" target="_blank">唔準打機.mov</a></div>
-      <div class="video-card"><a href="https://drive.google.com/drive/folders/1NFjVDnVFbmHlMvB6VQuZNwS4YYx-gk48?usp=drive_link" target="_blank">催眠治療師 Summy — 系列</a></div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">63<span>+</span></div>
+        <div class="stat-label">Total Works</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Clients</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Platforms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2024<span>—</span></div>
+        <div class="stat-label">Active Since</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ── SCRIPTS ── -->
-<section id="scripts">
+<!-- Gear Strip -->
+<div class="gear-strip">
+  <div class="gear-strip-item">Adobe Premiere Pro</div>
+  <div class="gear-strip-item">Sony FX3</div>
+  <div class="gear-strip-item">Sony A7 IV</div>
+  <div class="gear-strip-item">Sony 24-70mm f/2.8 GM II</div>
+  <div class="gear-strip-item">Sony 16-35mm f/2.8 GM</div>
+  <div class="gear-strip-item">Rode Wireless GO ii</div>
+</div>
+
+<!-- ══ WORKS ══ -->
+<section id="works" class="section">
   <div class="section-header">
-    <span class="section-num">02 —</span>
-    <h2>劇本<span>創作</span></h2>
+    <div class="section-title-group">
+      <div class="section-eyebrow">01 — Selected Works</div>
+      <h2 class="section-title">精選作品</h2>
+    </div>
+    <span class="section-count">63+ works across 3 platforms</span>
   </div>
 
-  <!-- Placeholder scripts — replace with real content -->
+  <!-- Client Tabs -->
+  <div class="client-tabs">
+    <button class="tab-btn active" onclick="switchTab(event,'ops')">The One Percent Studio</button>
+    <button class="tab-btn" onclick="switchTab(event,'ch1')">Channel 1 HK</button>
+    <button class="tab-btn" onclick="switchTab(event,'tpau')">Topaau 土炮</button>
+    <button class="tab-btn" onclick="switchTab(event,'free')">Freelance</button>
+  </div>
+
+  <!-- ── The One Percent Studio ── -->
+  <div class="client-panel active" id="panel-ops">
+
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-ig">Instagram Reels</span>
+        <span class="platform-count">7 works</span>
+      </div>
+      <div class="card-grid">
+        <!-- IG cards: no thumbnail, use gradient bg -->
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DUQTdHTkvEV/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">為自己做返一件事</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DTczmUFkvED/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">如果保險可以使用</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DTAe4GRElhU/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">最快的面試</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DScbuS0ErWU/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">保險翻譯機</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DSAAItiEnOf/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">保險佬</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DRCawi-ErID/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">唔準打機</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/mannok.dreamer/reel/DQ4Hij3Ejst/','_blank')">
+          <div class="card-thumb thumb-ig">
+            <svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+            <span class="thumb-platform tp-ig">IG Reel</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">到底賣緊乜</div>
+            <div class="card-link-btn">Watch</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-yt">YouTube</span>
+        <span class="platform-count">15 works</span>
+      </div>
+      <div class="card-grid">
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=8eIt0WsrdzI','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/8eIt0WsrdzI/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">為何你愛極都輸？用「選股思維」找到人生伴侶</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=nM-hk3WQ59g','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/nM-hk3WQ59g/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">用 $170 買回老婆的笑容｜以總監思維拯救婚姻！</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=plI3hZ4Fq2g','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/plI3hZ4Fq2g/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">兩公婆相處唔好再「遷就」｜拆解反傳統經營哲學</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=vZSgiA8JMPA','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/vZSgiA8JMPA/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">保險業「曬命」真相：是虛榮，還是專業？</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=HDz-Jkt1-xc','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/HDz-Jkt1-xc/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">拆解「酸民」心理學｜你的憤怒，源於你的無能</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=bCbE_3sZosw','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/bCbE_3sZosw/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">保險經理仲使唔使跑數？｜保險係咪真係咁好搵？</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=4p1sebYEqc8','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/4p1sebYEqc8/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">香港教育缺失的三大必修課</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=ochm9Ur8RkE','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/ochm9Ur8RkE/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">香港保險為何「乞人憎」？｜拆解風氣敗壞原因</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://youtu.be/NqH7D_eolg8','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/NqH7D_eolg8/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">香港人如果你覺得好攰，呢條片係為你而拍嘅</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=unDL6bixZXM','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/unDL6bixZXM/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">穿搭細節決定底氣｜Toby 姐分享優雅哲學</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=PVGII8Exee8','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/PVGII8Exee8/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">60歲不老秘訣：「無記性」先係快樂關鍵？</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=CV98L57BCII','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/CV98L57BCII/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">Toby 姐 2025 慶功晚宴：在億年化石前見證成功</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=X5abmjqmLy4','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/X5abmjqmLy4/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">成功快咗起碼 3 倍？Toby 姐：點解我更睇好呢一代年青人？</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=t_xGUAg54qs','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/t_xGUAg54qs/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">00後內耗太辛苦？Toby 姐靠「Simple Mind」贏了 35 年</div><div class="card-link-btn">Watch</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=sxq655JA9bE','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/sxq655JA9bE/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">YT</span></div>
+          <div class="card-body"><div class="card-title">亞洲獅子會第 18 屆長者千人宴｜勤．誠．愛</div><div class="card-link-btn">Watch</div></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-ops -->
+
+  <!-- ── Channel 1 HK ── -->
+  <div class="client-panel" id="panel-ch1">
+
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-ig">Instagram Reels</span>
+        <span class="platform-count">26 works</span>
+      </div>
+      <div class="card-grid">
+        <div class="video-card" onclick="window.open('https://www.instagram.com/reel/DRb28GVCS53/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">婷一婷，諗一諗（feat. Yanny Lau）</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DH3GOh0yoGM/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">小學生的愛情觀 你接受到幾多歲拍拖？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DJjX-ilyJGY/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">18歲的愛（feat. 張錦霞）第一集</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DJq_jIryP5E/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">18歲的愛（feat. 張錦霞）第二集</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DJ1SxI4yyBb/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">18歲的愛（feat. 張錦霞）第三集</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DQtfnjYCS9j/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">18區的愛 深水埗篇</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DOnrDsXCagl/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">觸電感覺（feat. 林敏聰、Yanny Chan）</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DQ6YYGHCfpt/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">00後的愛情（feat. 黎紜蔚）</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DIgNYrQSZyM/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">YOUNG AND CHIKAWA 古惑的愛</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DGAkUVqyIdV/','_blank')"><div class="card-thumb thumb-ig"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">LOVE IN 18 DISTRICT 觀塘海濱篇</div><div class="card-link-btn">Watch</div></div></div>
+      </div>
+    </div>
+
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-yt">YouTube</span>
+        <span class="platform-count">短劇 · 情感百科 · 街訪 · 業配</span>
+      </div>
+      <div class="card-grid">
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=H6BYhrOZNuo','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/H6BYhrOZNuo/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">短劇</span></div><div class="card-body"><div class="card-title">#短劇場《古惑的愛》Young and Chiikawa</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=hINKhP05JLM','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/hINKhP05JLM/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">短劇</span></div><div class="card-body"><div class="card-title">《18歲的愛》EP1-3 #短劇場</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=5eAuWnT0Lao','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/5eAuWnT0Lao/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">新春過年親戚拷問大作戰！如何應對三大難題？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=bCoHiarSVcs','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/bCoHiarSVcs/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">盤點：十大戀愛中的 Red flag 行為！feat. Coco</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=0Yna-TlUprQ','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/0Yna-TlUprQ/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">愈多 Like 就代表愈快樂？feat. EG大個仔</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=-CBMFZq_1Oo','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/-CBMFZq_1Oo/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">同居生活快樂不快樂？分手難度大增？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=dEBGXiGiQ_A','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/dEBGXiGiQ_A/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">為何總是沒有安全感？（戀愛腦 / check 電話）</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=zaLHMDlW2Uk','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/zaLHMDlW2Uk/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">結婚的意義是什麼？GenZ 95後都拒絕結婚？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=zy6hKFOzpms','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/zy6hKFOzpms/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">新戀愛模式 Situationship？無需負責又有性有愛</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=ZFbMyFsUASU','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/ZFbMyFsUASU/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">情感百科</span></div><div class="card-body"><div class="card-title">姊弟戀究竟有多好？feat. Killer1125</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=xalCFSZqbnE','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/xalCFSZqbnE/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">街訪</span></div><div class="card-body"><div class="card-title">#街訪 你知唔知有人 Stalk 你？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=IliDCWfnuAM','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/IliDCWfnuAM/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">街訪</span></div><div class="card-body"><div class="card-title">#街訪 2025年潮什麼？最流行 items 係 XXX？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=3sa47E_2VvQ','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/3sa47E_2VvQ/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">街訪</span></div><div class="card-body"><div class="card-title">#街訪 揭秘 GenZ 觀濱愛情觀！Free Kiss Free Hug</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=GCFDSjIdV6Q','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/GCFDSjIdV6Q/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">街訪</span></div><div class="card-body"><div class="card-title">#街訪 00後愛情觀！拖手都唔代表有意思</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=FNIiGiRfnEE','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/FNIiGiRfnEE/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">街訪</span></div><div class="card-body"><div class="card-title">#街訪 香港原來好容易就拍拖？</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=4ZXCd7I28_I','_blank')"><div class="card-thumb"><img src="https://img.youtube.com/vi/4ZXCd7I28_I/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">業配</span></div><div class="card-body"><div class="card-title">【東Try】盲測整牙系列！北上返深圳做全瓷牙貼可靠嗎？</div><div class="card-link-btn">Watch</div></div></div>
+      </div>
+    </div>
+  </div><!-- /panel-ch1 -->
+
+  <!-- ── Topaau ── -->
+  <div class="client-panel" id="panel-tpau">
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-ig">Instagram Reels</span>
+        <span class="platform-count">7 works</span>
+      </div>
+      <div class="card-grid">
+        <div class="video-card" onclick="window.open('https://www.instagram.com/reel/DNVNALPT8H8/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">香港美食 生炸雞髀</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DLFAjZbBZDE/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">香港美食 乾炒牛河</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DGknfOypx7O/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">香港美食 紅燒乳鴿</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DKg9aHWhLy9/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">全城最正 白灼牛肉</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DEUa8MEN_4h/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">香港美食 芒果白汁冰</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DDeWTRYqWMD/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">全城最正 大蝦煎米粉</div><div class="card-link-btn">Watch</div></div></div>
+        <div class="video-card" onclick="window.open('https://www.instagram.com/p/DCWQEEDILDZ/','_blank')"><div class="card-thumb thumb-ig" style="background:linear-gradient(135deg,#4a1942,#c94b4b)"><svg class="ig-icon" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg><span class="thumb-platform tp-ig">IG Reel</span></div><div class="card-body"><div class="card-title">懷舊牛雜麵</div><div class="card-link-btn">Watch</div></div></div>
+      </div>
+    </div>
+  </div><!-- /panel-tpau -->
+
+  <!-- ── Freelance ── -->
+  <div class="client-panel" id="panel-free">
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-drive">Google Drive</span>
+        <span class="platform-count">2 works</span>
+      </div>
+      <div class="card-grid">
+        <div class="video-card" onclick="window.open('https://drive.google.com/file/d/1E8-agOU5EbWOTmks7_dzF-W2iApVRg50/view','_blank')">
+          <div class="card-thumb" style="background:linear-gradient(135deg,#1a73e8,#0d47a1);display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M2 7l10 5 10-5" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M12 12v10" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/></svg>
+          </div>
+          <div class="card-body"><div class="card-title">唔準打機.mov</div><div class="card-link-btn">View</div></div>
+        </div>
+        <div class="video-card" onclick="window.open('https://drive.google.com/drive/folders/1NFjVDnVFbmHlMvB6VQuZNwS4YYx-gk48','_blank')">
+          <div class="card-thumb" style="background:linear-gradient(135deg,#1a73e8,#0d47a1);display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M2 7l10 5 10-5" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M12 12v10" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/></svg>
+          </div>
+          <div class="card-body"><div class="card-title">催眠治療師 Summy — 完整系列</div><div class="card-link-btn">View</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="platform-group">
+      <div class="platform-label">
+        <span class="platform-badge badge-yt">YouTube 活動</span>
+        <span class="platform-count">1 work</span>
+      </div>
+      <div class="card-grid">
+        <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=yaUNM4p-GZo','_blank')">
+          <div class="card-thumb"><img src="https://img.youtube.com/vi/yaUNM4p-GZo/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"/><span class="thumb-platform tp-yt">活動</span></div>
+          <div class="card-body"><div class="card-title">老玩童游法國《情迷巴黎》新書分享會 — 足本重溫</div><div class="card-link-btn">Watch</div></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-free -->
+</section>
+
+<!-- ══ SCRIPTS ══ -->
+<section id="scripts" class="section" style="background:#F0EDE6;">
+  <div class="section-header">
+    <div class="section-title-group">
+      <div class="section-eyebrow">02 — Screenplays</div>
+      <h2 class="section-title">劇本存檔</h2>
+    </div>
+    <span class="section-count">整理中</span>
+  </div>
+
   <div class="script-grid">
+    <!-- 有內容的卡 -->
     <div class="script-card">
-      <div class="script-meta">短劇 · Channel 1 HK</div>
-      <div class="script-title">《18歲的愛》</div>
-      <div class="script-excerpt">一個關於青春、初戀與成長的三集短劇系列。跟隨一段橫跨18歲的愛情故事，探索香港年輕一代的情感世界……</div>
+      <div class="script-tag">短劇 · Channel 1 HK</div>
+      <div class="script-title">《18歲的愛》三集系列</div>
+      <div class="script-desc">跟隨一段橫跨18歲的愛情故事，探索香港年輕一代面對愛情的迷失與選擇。</div>
     </div>
     <div class="script-card">
-      <div class="script-meta">短劇 · Channel 1 HK</div>
+      <div class="script-tag">短劇 · Channel 1 HK</div>
       <div class="script-title">《古惑的愛》Young and Chiikawa</div>
-      <div class="script-excerpt">將流行IP與香港本土文化結合，以輕鬆幽默的方式呈現現代愛情的矛盾與甜蜜……</div>
+      <div class="script-desc">將流行 IP 與香港本土文化結合，以輕鬆幽默呈現現代愛情的矛盾與甜蜜。</div>
     </div>
-    <div class="script-card">
-      <div class="script-meta">街訪 · Channel 1 HK</div>
-      <div class="script-title">00後愛情觀系列</div>
-      <div class="script-excerpt">採訪問題設計及後期剪輯方向規劃，捕捉GenZ一代最真實的情感表達與愛情哲學……</div>
-    </div>
-  </div>
 
-  <div style="margin-top: 2rem;">
-    <p class="script-placeholder">✦ 更多劇本及企劃書歡迎直接聯絡查閱</p>
+    <!-- 骨架佔位卡 -->
+    <div class="skeleton-card">
+      <div class="skel-line h-14 w-40"></div>
+      <div class="skel-line w-80" style="margin-top:0.8rem"></div>
+      <div class="skel-line w-60"></div>
+      <div class="skel-line w-80"></div>
+      <div class="skel-badge"><div class="skel-dot"></div>整理中，敬請期待</div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skel-line h-14 w-40"></div>
+      <div class="skel-line w-80" style="margin-top:0.8rem"></div>
+      <div class="skel-line w-60"></div>
+      <div class="skel-line w-80"></div>
+      <div class="skel-badge"><div class="skel-dot"></div>整理中，敬請期待</div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skel-line h-14 w-40"></div>
+      <div class="skel-line w-80" style="margin-top:0.8rem"></div>
+      <div class="skel-line w-60"></div>
+      <div class="skel-line w-80"></div>
+      <div class="skel-badge"><div class="skel-dot"></div>整理中，敬請期待</div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skel-line h-14 w-40"></div>
+      <div class="skel-line w-80" style="margin-top:0.8rem"></div>
+      <div class="skel-line w-60"></div>
+      <div class="skel-badge"><div class="skel-dot"></div>整理中，敬請期待</div>
+    </div>
   </div>
 </section>
 
-<!-- ── ABOUT / GEAR ── -->
-<section id="about">
+<!-- ══ ABOUT ══ -->
+<section id="about" class="section">
   <div class="section-header">
-    <span class="section-num">03 —</span>
-    <h2>關於<span>我</span></h2>
+    <div class="section-title-group">
+      <div class="section-eyebrow">03 — About</div>
+      <h2 class="section-title">關於我</h2>
+    </div>
   </div>
 
-  <div class="about-grid">
-    <div>
-      <p class="about-text">
-        我是一名來自香港的影片剪接師及媒體創作人，專注於情感內容、街訪短片及短劇製作。<br/><br/>
-        曾服務於 Channel 1 HK、The One Percent Studio、土炮 Topaau 等媒體機構，擅長以快節奏剪輯配合音效設計，打造具感染力的視聽體驗。<br/><br/>
-        從企劃、劇本、拍攝到後期，我習慣全程參與——因為好的故事，從一開始就需要被認真對待。
-      </p>
+  <div class="about-layout">
+    <div class="about-text">
+      <p>我是一名來自香港的影片剪接師及媒體創作人，專注於情感內容、街訪短片及短劇製作。</p>
+      <p>曾服務於 The One Percent Studio、Channel 1 HK、土炮 Topaau 等媒體機構，擅長以快節奏剪輯配合音效設計，打造具感染力的視聽體驗。</p>
+      <p>從企劃、劇本、拍攝到後期，我習慣全程參與——因為好的故事，從一開始就需要被認真對待。</p>
     </div>
     <div>
-      <p class="gear-category">軟件</p>
-      <ul class="gear-list">
-        <li>Adobe Premiere Pro</li>
-      </ul>
-      <p class="gear-category">相機</p>
-      <ul class="gear-list">
-        <li>Sony FX3</li>
-        <li>Sony A7 IV</li>
-      </ul>
-      <p class="gear-category">鏡頭</p>
-      <ul class="gear-list">
-        <li>Sony 24-70mm f/2.8 GM II</li>
-        <li>Sony 16-35mm f/2.8 GM</li>
-      </ul>
-      <p class="gear-category">收音</p>
-      <ul class="gear-list">
-        <li>Rode Wireless GO ii</li>
-      </ul>
+      <div class="gear-category">軟件</div>
+      <div class="gear-row"><div class="gear-dot"></div><div class="gear-name">Adobe Premiere Pro</div></div>
+      <div class="gear-category">相機</div>
+      <div class="gear-row"><div class="gear-dot"></div><div class="gear-name">Sony FX3</div></div>
+      <div class="gear-row"><div class="gear-dot"></div><div class="gear-name">Sony A7 IV</div></div>
+      <div class="gear-category">鏡頭</div>
+      <div class="gear-row"><div class="gear-dot"></div><div class="gear-name">Sony 24-70mm f/2.8 GM II</div></div>
+      <div class="gear-row"><div class="gear-dot"></div><div class="gear-name">Sony 16-35mm f/2.8 GM</div></div>
+      <div class="gear-category">收音</div>
+      <div class="gear-row"><div class="gear-dot"></div><div class="gear-name">Rode Wireless GO ii</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── CONTACT ── -->
-<section id="contact">
-  <div class="section-header" style="justify-content: center;">
-    <span class="section-num">04 —</span>
-    <h2>開始<span>合作</span></h2>
-  </div>
-  <p class="about-text" style="text-align:center; max-width:500px; margin:0 auto; color:var(--muted);">
-    如有任何合作邀請、品牌業配或自由接案查詢，<br/>歡迎隨時與我聯絡。
-  </p>
-  <div style="text-align:center;">
-    <a class="contact-email" href="mailto:your@email.com">your@email.com</a>
+<!-- ══ CONTACT ══ -->
+<section id="contact" class="section">
+  <div class="contact-inner">
+    <h2 class="contact-title">開始<br/><span>合作</span></h2>
+    <p class="contact-sub">如有任何合作邀請、品牌業配或自由接案查詢，歡迎隨時與我聯絡。</p>
+    <a class="contact-btn" href="mailto:your@email.com">your@email.com</a>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
+<!-- ══ FOOTER ══ -->
 <footer>
-  <span>© 2025 Bryce · Video Editor</span>
-  <span>Hong Kong · Channel 1 HK · Topaau · The One Percent Studio</span>
+  <span>© 2025 Bryce · Video Editor & Media Creator · HK</span>
+  <span>The One Percent Studio · Channel 1 HK · Topaau · Freelance</span>
 </footer>
+
+<!-- ══ TAB SCRIPT ══ -->
+<script>
+function switchTab(e, panelId) {
+  // Remove active from all tabs and panels
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.client-panel').forEach(p => p.classList.remove('active'));
+  // Activate clicked
+  e.currentTarget.classList.add('active');
+  document.getElementById('panel-' + panelId).classList.add('active');
+}
+</script>
 
 </body>
 </html>
